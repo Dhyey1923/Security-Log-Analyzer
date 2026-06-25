@@ -23,53 +23,39 @@ Technologies Used
 
 How It Works
 
-1. Upload a log file (.txt).
-2. Click the Analyze Log button.
+1. Upload a log file (.txt)
+2. Click the Analyze Log button
 3. The system scans the file for:
     * Errors
     * Warnings
     * Failed Login Attempts
     * Suspicious IP Addresses
-4. A security report is displayed instantly on the dashboard.
-
-Sample Log Format
-
-INFO User logged in
-
-WARNING Low disk space
-
-ERROR Database connection failed
-
-FAILED LOGIN from 192.168.1.10
-
-FAILED LOGIN from 192.168.1.10
-
-FAILED LOGIN from 192.168.1.10
-
-FAILED LOGIN from 10.0.0.5
+4. A security report is displayed instantly on the dashboard
 
 Risk Level Calculation
 
-* Low Risk
-* Medium Risk
-* High Risk
+The risk level is determined based on the number of detected errors and failed login attempts:
 
-The risk level is calculated based on the number of errors and failed login attempts detected in the log file.
+* 🟢 Low Risk
+* 🟡 Medium Risk
+* 🔴 High Risk
 
 Project Structure
 
+Security-Log-Analyzer/
+
 ├── index.html
 
-├── README.md
+└── README.md
 
 Future Improvements
 
 * PDF Report Generation
-* Download Analysis Reports
+* Downloadable Analysis Reports
 * Interactive Charts and Graphs
 * Real-Time Log Monitoring
 * Advanced Threat Detection
-* Log Filtering and Search
+* Log Filtering and Search Functionality
 
 Author
 
