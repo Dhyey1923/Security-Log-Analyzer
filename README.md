@@ -4,6 +4,13 @@ Overview
 
 Security Log Analyzer is a web-based cybersecurity tool that analyzes log files and identifies potential security threats. The application allows users to upload log files and automatically generates a security report containing error counts, warning counts, failed login attempts, risk levels, and suspicious IP addresses.
 
+## Live Demo
+
+🔗 Live Application:
+https://dhyey1923.github.io/Security-Log-Analyzer/
+
+This interactive web application demonstrates basic Security Information and Event Management (SIEM) concepts by analyzing log files, identifying suspicious IP addresses, tracking failed login attempts, and assessing overall security risk.
+
 Features
 
 * 📂 Upload log files for analysis
@@ -48,14 +55,6 @@ Security-Log-Analyzer/
 
 └── README.md
 
-Future Improvements
-
-* PDF Report Generation
-* Downloadable Analysis Reports
-* Interactive Charts and Graphs
-* Real-Time Log Monitoring
-* Advanced Threat Detection
-* Log Filtering and Search Functionality
 
 Author
 
