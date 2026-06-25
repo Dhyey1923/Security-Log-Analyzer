@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Log Analyzer</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#0f172a;
+    color:white;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.container{
+    width:900px;
+    background:#1e293b;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 0 20px rgba(0,255,255,0.2);
+}
+
+h1{
+    text-align:center;
+    color:#38bdf8;
+    margin-bottom:20px;
+}
+
+.upload-box{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+input[type="file"]{
+    padding:10px;
+    color:white;
+}
+
+button{
+    padding:12px 25px;
+    border:none;
+    background:#38bdf8;
+    color:black;
+    font-weight:bold;
+    border-radius:8px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+button:hover{
+    background:#0ea5e9;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-top:25px;
+}
+
+.card{
+    background:#334155;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.card h2{
+    color:#38bdf8;
+}
+
+.card p{
+    font-size:24px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+#risk{
+    font-size:22px;
+}
+
+.result{
+    margin-top:25px;
+    background:#334155;
+    padding:20px;
+    border-radius:10px;
+}
+
+ul{
+    margin-top:10px;
+    padding-left:20px;
+}
+
+.footer{
+    text-align:center;
+    margin-top:20px;
+    color:#94a3b8;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🔐 Security Log Analyzer</h1>
+
+    <div class="upload-box">
+        <input type="file" id="logFile">
+        <br>
+        <button onclick="analyzeLog()">Analyze Log</button>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h2>Total Logs</h2>
+            <p id="total">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Errors</h2>
+            <p id="errors">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Warnings</h2>
+            <p id="warnings">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Failed Attempts</h2>
+            <p id="failed">0</p>
+        </div>
+
+        <div class="card">
+            <h2>Risk Level</h2>
+            <p id="risk">LOW</p>
+        </div>
+    </div>
+
+    <div class="result">
+        <h2>🚨 Suspicious IP Addresses</h2>
+        <ul id="ipList">
+            <li>No data analyzed yet.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        Security Log Analyzer v1.0
+    </div>
+
+</div>
+
+<script>
+function analyzeLog() {
+
+    const fileInput = document.getElementById("logFile");
+
+    if(fileInput.files.length === 0){
+        alert("Please upload a log file.");
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+        const content = e.target.result;
+        const lines = content.split(/\r?\n/);
+
+        let errors = 0;
+        let warnings = 0;
+        let failed = 0;
+
+        let ipCounts = {};
+
+        lines.forEach(line => {
+
+            const upper = line.toUpperCase();
+
+            if(upper.includes("ERROR"))
+                errors++;
+
+            if(upper.includes("WARNING"))
+                warnings++;
+
+            if(upper.includes("FAILED"))
+                failed++;
+
+            const match = line.match(/\b\d{1,3}(?:\.\d{1,3}){3}\b/);
+
+            if(match && upper.includes("FAILED")){
+
+                const ip = match[0];
+
+                if(ipCounts[ip]){
+                    ipCounts[ip]++;
+                } else {
+                    ipCounts[ip] = 1;
+                }
+            }
+        });
+
+        let riskScore = errors + (failed * 2);
+        let riskLevel = "LOW";
+
+        if(riskScore >= 10)
+            riskLevel = "HIGH";
+        else if(riskScore >= 5)
+            riskLevel = "MEDIUM";
+
+        document.getElementById("total").innerText = lines.length;
+        document.getElementById("errors").innerText = errors;
+        document.getElementById("warnings").innerText = warnings;
+        document.getElementById("failed").innerText = failed;
+        document.getElementById("risk").innerText = riskLevel;
+
+        const ipList = document.getElementById("ipList");
+        ipList.innerHTML = "";
+
+        let suspiciousFound = false;
+
+        for(let ip in ipCounts){
+
+            if(ipCounts[ip] >= 3){
+
+                suspiciousFound = true;
+
+                let li = document.createElement("li");
+                li.textContent = `${ip} → ${ipCounts[ip]} failed attempts`;
+                ipList.appendChild(li);
+            }
+        }
+
+        if(!suspiciousFound){
+            ipList.innerHTML = "<li>No suspicious IPs detected.</li>";
+        }
+    };
+
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>
